@@ -1,0 +1,22 @@
+{
+  "name": "Something cool",
+  "version": "1.0.0",
+  "description": "Get richzz",
+  "manifest_version": 3,
+  "author": "Me",
+  "host_permissions": ["https://www.csgoroll.com/*"],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "CSGO profit"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.csgoroll.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "permissions": ["activeTab", "storage", "scripting"]
+}

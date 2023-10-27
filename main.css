@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.box {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+}
+
+#nog {
+  color: #fff;
+  font-size: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  color: #000;
+  font-size: 20px;
+  cursor: pointer;
+  width: "100%";
+}
+
+.start {
+  background-color: lightgreen;
+}
+.start::before {
+  content: 'Start';
+}
+
+.stop {
+  background-color: lightcoral;
+}
+.stop::before {
+  content: 'Stop';
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 13px;
+}
+
+.form-group input {
+  padding: 2px 5px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+}
