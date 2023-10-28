@@ -1,36 +1,16 @@
 import { getActiveTabURL } from './util.js'
 
-let numberOfGames = 10
-let startBettingThreshold = 2
-
-const changeChromeStorage = (key, state) => {
-  chrome.storage.sync.set({
-    [key]: state
-  })
-}
-
-const getChromeStorage = (key) => {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get([key], (data) => {
-      resolve(data[key])
-    })
-  })
-}
-
-const setButtonState = (state) => {
-  const button = document.getElementById('jklfsdy8934rhu894r3nuiveryh789')
-  button.className = state
-}
+let numberOfGames = 4
+let startBettingThreshold = 3
+let startBetAmount = 10
 
 const changeButtonState = () => {
   const button = document.getElementById('jklfsdy8934rhu894r3nuiveryh789')
   if (button.className === 'start') {
     button.className = 'stop'
-    changeChromeStorage('playing', true)
     return 'start'
   } else if (button.className == 'stop') {
     button.className = 'start'
-    changeChromeStorage('playing', false)
     return 'stop'
   }
 }
@@ -55,20 +35,25 @@ const stopBetting = async () => {
   })
 }
 
-const continueBetting = async () => {
-  const activeTab = await getActiveTabURL()
-  sendChromeMessage(activeTab.id, {
-    type: 'ALREADY_PLAYING',
-    numberOfGames: numberOfGames,
-    startBettingThreshold: startBettingThreshold
-  })
+const disableInputs = () => {
+  document.getElementById('numberOfGames').disabled = true
+  document.getElementById('startBettingThreshold').disabled = true
+  document.getElementById('startBetAmount').disabled = true
+}
+
+const enableInputs = () => {
+  document.getElementById('numberOfGames').disabled = false
+  document.getElementById('startBettingThreshold').disabled = false
+  document.getElementById('startBetAmount').disabled = false
 }
 
 async function buttonClick() {
   const state = changeButtonState()
   if (state === 'start') {
+    disableInputs()
     startBetting()
   } else if (state === 'stop') {
+    enableInputs()
     stopBetting()
   }
 }
@@ -83,6 +68,10 @@ const populateBox = async () => {
     <div class="form-group">
       <label for="startBettingThreshold" id="startBettingThresholdLabel">Start betting threshold: ${startBettingThreshold}</label>
       <input type="number" class="form-control" id="startBettingThreshold" value="${startBettingThreshold}">
+    </div>
+    <div class="form-group">
+      <label for="startBetAmount" id="startBetAmountLabel">Start bet amount: ${startBetAmount}</label>
+      <input type="number" class="form-control" id="startBetAmount" value="${startBetAmount}">
     </div>
   `
 }
@@ -104,19 +93,9 @@ const setupEventListeners = () => {
   document.getElementById('jklfsdy8934rhu894r3nuiveryh789').addEventListener('click', buttonClick)
 }
 
-const initGame = async (alreadyPlaying) => {
-  const state = alreadyPlaying ? 'stop' : 'start'
-  setButtonState(state)
-
-  if (alreadyPlaying) {
-    continueBetting()
-  }
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   const activeTab = await getActiveTabURL()
-  const alreadyPlaying = await getChromeStorage('playing')
-  initGame(alreadyPlaying)
+  stopBetting()
 
   if (activeTab.url.includes('csgoroll.com/en/crash')) {
     document.getElementById('test_header').innerHTML = 'CSGO roll crash site found!'

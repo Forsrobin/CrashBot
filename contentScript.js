@@ -13,6 +13,7 @@
     })
     // Splice the array based on the number of games
     values.splice(numberOfGames, values.length)
+
     return values
   }
 
@@ -25,10 +26,16 @@
   const bet = (betAmount) => {
     const buttonPlusOne = document.querySelectorAll('[data-test="plus-1"]')[1]
 
-    console.log('Bet amount', betAmount)
+    console.log('Betting time')
 
-    // Reset the input field
-    document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1].value = 0
+    document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1].value = 40
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      code: 'Enter',
+      which: 13,
+      keyCode: 13
+    })
+    document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1].dispatchEvent(event)
 
     // console.log('Betting')
     for (let index = 0; index < betAmount; index++) {
@@ -85,9 +92,6 @@
       setupEventListeners(numberOfGames, startBettingThreshold)
     } else if (type === 'STOP') {
       removeEventListeners()
-    } else if (type === 'ALREADY_PLAYING') {
-      removeEventListeners()
-      setupEventListeners(numberOfGames, startBettingThreshold)
     }
   })
 })()
