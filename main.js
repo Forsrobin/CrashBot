@@ -4,8 +4,6 @@ let numberOfGames = 10
 let startBettingThreshold = 2
 
 const changeChromeStorage = (key, state) => {
-  console.log('Changing chrome storage')
-  console.log(key, state)
   chrome.storage.sync.set({
     [key]: state
   })
@@ -57,6 +55,15 @@ const stopBetting = async () => {
   })
 }
 
+const continueBetting = async () => {
+  const activeTab = await getActiveTabURL()
+  sendChromeMessage(activeTab.id, {
+    type: 'ALREADY_PLAYING',
+    numberOfGames: numberOfGames,
+    startBettingThreshold: startBettingThreshold
+  })
+}
+
 async function buttonClick() {
   const state = changeButtonState()
   if (state === 'start') {
@@ -102,7 +109,7 @@ const initGame = async (alreadyPlaying) => {
   setButtonState(state)
 
   if (alreadyPlaying) {
-    startBetting()
+    continueBetting()
   }
 }
 
