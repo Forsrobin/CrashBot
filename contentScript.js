@@ -64,6 +64,7 @@
             const shouldBet = maxCrash <= startBettingThreshold
 
             if (shouldBet) {
+              
               if (previousMoney && getAmountOfMoney() < previousMoney) {
                 console.log('Lost money, increasing bet amount by times 2')
                 betAmount *= 2

@@ -1,8 +1,8 @@
 import { getActiveTabURL } from './util.js'
 
-let numberOfGames = 2
-let startBettingThreshold = 3000
-let startBetAmount = 10
+let numberOfGames = 3
+let startBettingThreshold = 2
+let startBetAmount = 0.01
 
 const changeButtonState = () => {
   const button = document.getElementById('jklfsdy8934rhu894r3nuiveryh789')
