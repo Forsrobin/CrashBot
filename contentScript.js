@@ -23,31 +23,38 @@
     return money
   }
 
-  const bet = (betAmount) => {
-    const buttonPlusOne = document.querySelectorAll('[data-test="plus-1"]')[1]
-
-    console.log('Betting time')
-
-    document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1].value = 40
-    const event = new KeyboardEvent('keydown', {
-      key: 'Enter',
-      code: 'Enter',
-      which: 13,
-      keyCode: 13
-    })
-    document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1].dispatchEvent(event)
-
-    // console.log('Betting')
-    for (let index = 0; index < betAmount; index++) {
-      buttonPlusOne.focus()
-      buttonPlusOne.click()
-    }
+  const updateInputValue = (element, value) => {
+    var event = new Event('input', { bubbles: true })
+    event.simulated = true
+    element.value = value
+    element.defaultValue = value
+    element.dispatchEvent(event)
   }
 
-  const setupEventListeners = (numberOfGames, startBettingThreshold) => {
+  const bet = (betAmount) => {
+    var coinInputElement = document.querySelectorAll('[data-test="bet-amount-input-fields"]')[1]
+    var autoCashoutElement = document.querySelectorAll('[data-test="bet-amount-input-fields"]')[0]
+    const button = document.querySelector('[data-test="place-queue-bet"]')
+
+    updateInputValue(coinInputElement, betAmount)
+    updateInputValue(autoCashoutElement, 2)
+
+    // Disconnect the mutationObserver to prevent the button from being clicked
+    mutationObserver.disconnect()
+    // Click the button
+    button.click()
+    // Wait 2 second after clicking the button
+    setTimeout(() => {
+      // Start the mutationObserver again
+      mutationObserver.observe(button, { attributes: true })
+    }, 2000)
+  }
+
+  const setupEventListeners = (numberOfGames, startBettingThreshold, startBetAmount) => {
     // Setup a mutationObserver for data-test="place-queue-bet" to see if the button
     // is in a queue state or bet state
     const button = document.querySelector('[data-test="place-queue-bet"]')
+
     mutationObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'disabled') {
@@ -62,12 +69,13 @@
                 betAmount *= 2
               } else if (previousMoney && getAmountOfMoney() >= previousMoney) {
                 console.log('Won money, resetting bet amount')
-                betAmount = 2
+                betAmount = startBetAmount
               }
 
+              // Update the previous money
               previousMoney = getAmountOfMoney()
-
               bet(betAmount)
+
               return
             } else {
               console.log('Not betting becasue the max crash is', maxCrash, 'and the start betting threshold is', startBettingThreshold)
@@ -85,11 +93,11 @@
   }
 
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    const { type, numberOfGames, startBettingThreshold } = obj
+    const { type, numberOfGames, startBettingThreshold, startBetAmount } = obj
     console.log('Message received', obj)
     if (type === 'PLAY') {
-      betAmount = 2
-      setupEventListeners(numberOfGames, startBettingThreshold)
+      betAmount = startBetAmount
+      setupEventListeners(numberOfGames, startBettingThreshold, startBetAmount)
     } else if (type === 'STOP') {
       removeEventListeners()
     }

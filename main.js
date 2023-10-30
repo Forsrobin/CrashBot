@@ -1,7 +1,7 @@
 import { getActiveTabURL } from './util.js'
 
-let numberOfGames = 4
-let startBettingThreshold = 3
+let numberOfGames = 2
+let startBettingThreshold = 3000
 let startBetAmount = 10
 
 const changeButtonState = () => {
@@ -24,6 +24,7 @@ const startBetting = async () => {
   sendChromeMessage(activeTab.id, {
     type: 'PLAY',
     numberOfGames: numberOfGames,
+    startBetAmount: startBetAmount,
     startBettingThreshold: startBettingThreshold
   })
 }
